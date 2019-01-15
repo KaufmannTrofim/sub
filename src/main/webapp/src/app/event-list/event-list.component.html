@@ -1,0 +1,11 @@
+<div class="grid-container">
+  <app-event class="column" *ngFor="let event of events | slice:0:5" (deleteEvent)="removeEvent($event)" [userRoles]="userRoles" [event]="event"></app-event>
+</div>
+<div class="grid-container">
+  <app-event class="column" *ngFor="let event of events | slice:5" (deleteEvent)="removeEvent($event)" [userRoles]="userRoles" [event]="event"></app-event>
+</div>
+<div *ngIf="userRoles.indexOf('ROLE_ADMIN') != -1" class="add-event-btn-container">
+  <button (click)="openAddForm()" mat-raised-button color="primary">
+      <span>+ Добавить событие</span>
+  </button>
+</div>

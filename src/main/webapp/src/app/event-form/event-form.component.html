@@ -1,0 +1,57 @@
+<form #eventForm="ngForm" appIdentityRevealed>
+  <div [hidden]="eventForm.submitted">
+    <div class="cross-validation" [class.cross-validation-error]="!!eventForm.errors?.identityRevealed && (eventForm.touched || eventForm.dirty)">
+
+      <button tabindex="-1" (click)="onClose()" type="button" class="close"><span class="glyphicon glyphicon-remove"></span></button>
+
+      <div class="form-group">
+        <label for="name">Название события</label>
+        <input tabindex="-1" id="name" name="name" class="form-control" minlength="4" [(ngModel)]="event.name" #name="ngModel" autocomplete="off" required>
+        <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
+          <div *ngIf="!!name.errors.required">
+            Обязательное поле.
+          </div>
+          <div *ngIf="!!name.errors.minlength">
+            Длина названия должна быть не менее 4 символов.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Дата проведения</label>
+        <input tabindex="-1" [(ngModel)]="event.date" id="datetimepicker" name="datetimepicker" class="form-control"
+               autocomplete="off" [min]="today" [owlDateTime]="dt" [owlDateTimeTrigger]="dt">
+        <owl-date-time #dt></owl-date-time>
+      </div>
+
+      <div class="form-group">
+          <label for="themeInput">Темы</label>
+          <div>
+            <mat-chip-list #chipList>
+              <mat-chip *ngFor="let theme of event.themesSPA" [selectable]="true" [removable]="true" (removed)="removeTheme(theme)">
+                {{theme.topic}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            </mat-chip-list>
+            <input tabindex="-1" id="themeInput" #themeInput [formControl]="themeCtrl" [matAutocomplete]="auto"
+                   [matChipInputFor]="chipList" (matChipInputTokenEnd)="addTheme($event)">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedTheme($event)">
+              <mat-option *ngFor="let theme of filteredThemes | async" [value]="theme">
+                {{theme.topic}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+    </div>
+
+    <div class="submit-btn-container">
+      <button *ngIf="!isEdit" [disabled]="eventForm.invalid" color="primary" (click)="postEvent()" mat-raised-button>
+        <span>Добавить событие</span>
+      </button>
+      <button *ngIf="isEdit" [disabled]="eventForm.invalid" color="primary" (click)="updateEvent()" mat-raised-button>
+        <span>Сохранить изменения</span>
+      </button>
+    </div>
+  </div>
+</form>
+
